@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+      <style>
+        #imageZone {
+            position: absolute;
+            top: 64px;
+            width: 1024px;
+            height: 768px;
+            /*display: none;*/
+        }
+        #videoZone {
+            position: absolute;
+            top: 64px;
+            width: 1024px;
+            height: 768px;
+            display: none;
+        }
+      </style>
+  </head>
+  <body>
+    <div>Hello, BrightSign!</div>
+    
+<nav>
+  <button id="startApp">Start App</button>
+</nav>
+
+<div>
+    <img id="imageZone" src="testImage.jpg" />
+    <video id="videoZone" controls></video>
+<!--    <video width="1024" height="768" controls>
+        <source src="mov_bbb.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+-->
+</div>
+
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/bs.js"></script>
+
+  </body>
+</html>

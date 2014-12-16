@@ -1,0 +1,19 @@
+{
+  "name": "Hello BrightSign!",
+  "description": "My first BrightSign Chrome App.",
+  "version": "0.1",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "permissions": [
+	"storage",
+	"unlimitedStorage",
+	"https://services.brightsignnetwork.com/",
+	"http://bsnm.s3.amazonaws.com/",
+	{"fileSystem": ["write", "retainEntries", "directory"]} 
+  ],
+  "icons": { "16": "ba-16.png", "128": "ba-128.png" }
+}
