@@ -276,29 +276,21 @@ $(document).ready(function () {
 
             $("#videoZone").on("ended", function (e) {
                 console.log("video ended");
+                index = index + 1;
+                if (index >= filesToDisplay.length) {
+                    index = 0;
+                }
+
+                displayItem(index);
             });
-
-            setTimeout(
-                function () {
-                    console.log("play video");
-
-                    index = index + 1;
-                    if (index >= filesToDisplay.length) {
-                        index = 0;
-                    }
-
-                    displayItem(index);
-                },
-                18000);
         }
         else {
+            $('#videoZone').hide();
+            $('#imageZone').show();
+            $("#imageZone").attr('src', filesToDisplay[index].blobURL);
+
             setTimeout(
                 function () {
-
-                    $('#videoZone').hide();
-                    $('#imageZone').show();
-                    $("#imageZone").attr('src', filesToDisplay[index].blobURL);
-
                     index = index + 1;
                     if (index >= filesToDisplay.length) {
                         index = 0;
@@ -334,64 +326,5 @@ $(document).ready(function () {
         //var url = "./" + filesToDisplay[index].blobURL;
 
         displayItem(0);
-
-        //while (true) {
-        //    if (filesToDisplay[index].mimeType == "video/mp4") {
-        //        $('#imageZone').hide();
-        //        $('#videoZone').show();
-        //        $("#videoZone").attr('src', filesToDisplay[index].blobURL);
-        //        $('#videoZone')[0].load();
-        //        $('#videoZone')[0].play();
-        //        setInterval(
-        //            function () {
-        //                console.log("play video");
-
-        //                index = index + 1;
-        //                if (index >= filesToDisplay.length) {
-        //                    index = 0;
-        //                }
-        //            },
-        //            8000);
-        //    }
-        //    else {
-        //        setTimeout(
-        //            function () {
-
-        //                $('#videoZone').hide();
-        //                $('#imageZone').show();
-        //                $("#imageZone").attr('src', filesToDisplay[index].blobURL);
-
-        //                index = index + 1;
-        //                if (index >= filesToDisplay.length) {
-        //                    index = 0;
-        //                }
-        //            },
-        //            2000);
-        //    }
-        //}
-
-        //setInterval(
-        //    function() {
-        //        index = index + 1;
-        //        if (index >= filesToDisplay.length) {
-        //            index = 0;
-        //        }
-        //        console.log("timeout: index = " + index.toString());
-
-        //        if (filesToDisplay[index].mimeType == "video/mp4") {
-        //            $('#imageZone').hide();
-        //            $('#videoZone').show();
-        //            $("#videoZone").attr('src', filesToDisplay[index].blobURL);
-        //            $('#videoZone')[0].load();
-        //            $('#videoZone')[0].play();
-        //            interval = 20000;
-        //        }
-        //        else {
-        //            $('#videoZone').hide();
-        //            $('#imageZone').show();
-        //            $("#imageZone").attr('src', filesToDisplay[index].blobURL);
-        //        }
-        //    }, 
-        //    4000);
     }
 });
