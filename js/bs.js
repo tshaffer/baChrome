@@ -175,7 +175,6 @@ $(document).ready(function () {
         });
 
         fileToDisplay = filesToDownload[0];
-        //performFileDownloads(filesToDownload);
         getFiles(filesToDownload);
     }
 
@@ -208,7 +207,7 @@ $(document).ready(function () {
                     fileToRetrieve.blob = new Blob([byteArray], { type: fileToRetrieve.mimeType });
                     fileToRetrieve.blobURL = window.URL.createObjectURL(fileToRetrieve.blob);
 
-                    filesToDisplay.push(fileToRetrieve.blobURL);
+                    filesToDisplay.push(fileToRetrieve);
                     getFiles(filesToRetrieve);
                 };
 
@@ -247,7 +246,7 @@ $(document).ready(function () {
 
                         fileWriter.onwriteend = function (e) {
                             console.log('Write completed: ' + fileToDownload.name);
-                            filesToDisplay.push(fileToDownload.blobURL);
+                            filesToDisplay.push(fileToDownload);
                             getFiles(filesToRetrieve);
                         };
 
@@ -266,86 +265,48 @@ $(document).ready(function () {
         oReq.send(null);
     }
 
-    function performFileDownloads(filesToDownload) {
+    function displayItem(index) {
 
-        if (filesToDownload.length > 0) {
+        if (filesToDisplay[index].mimeType == "video/mp4") {
+            $('#imageZone').hide();
+            $('#videoZone').show();
+            $("#videoZone").attr('src', filesToDisplay[index].blobURL);
+            $('#videoZone')[0].load();
+            $('#videoZone')[0].play();
 
-            var fileToDownload = filesToDownload.shift();
+            $("#videoZone").on("ended", function (e) {
+                console.log("video ended");
+            });
 
-            debugger;
+            setTimeout(
+                function () {
+                    console.log("play video");
 
-            // check to see if this file already exists in the file system
-            _fileSystem.root.getFile(fileToDownload.name, {}, function (fileEntry) {
+                    index = index + 1;
+                    if (index >= filesToDisplay.length) {
+                        index = 0;
+                    }
 
-                // Get a File object representing the file,
-                // then use FileReader to read its contents.
-                fileEntry.file(function (file) {
-                    var reader = new FileReader();
-
-                    reader.onloadend = function (e) {   // this.result
-                        var byteArray = new Uint8Array(this.result);
-                        fileToDownload.blob = new Blob([byteArray], { type: "image/jpeg" });
-                        fileToDownload.blobURL = window.URL.createObjectURL(fileToDownload.blob);
-
-                        filesToDisplay.push(fileToDownload.blobURL);
-
-                        performFileDownloads(filesToDownload);
-                    };
-
-                    reader.readAsArrayBuffer(file);
-
-                }, fileSystemErrorHandler);
-
-            }, fileSystemErrorHandler);
-
-            return;
-
-            // file does not exist; download it and write it once downloaded
-
-            // see http://www.html5rocks.com/en/tutorials/file/xhr2/ for a way to avoid arraybuffer
-            var oReq = new XMLHttpRequest();
-            oReq.open("GET", fileToDownload.link, true);
-            oReq.responseType = "arraybuffer";
-
-            oReq.onload = function (oEvent) {
-                var arrayBuffer = oReq.response; // Note: not oReq.responseText
-                if (arrayBuffer) {
-
-                    var byteArray = new Uint8Array(arrayBuffer);
-                    fileToDownload.blob = new Blob([byteArray], {type: "image/jpeg"});
-                    fileToDownload.blobURL = window.URL.createObjectURL(fileToDownload.blob);
-
-                    _fileSystem.root.getFile(fileToDownload.name, { create: true }, function (fileEntry) {
-                        fileEntry.createWriter(function(fileWriter) {
-
-                            fileWriter.onwriteend = function(e) {
-                                console.log('Write completed: ' + fileToDownload.name);
-
-                                filesToDisplay.push(fileToDownload.blobURL);
-
-                                // not all files are written out if one file has a write error
-                                performFileDownloads(filesToDownload);
-                            };
-
-                            fileWriter.onerror = function(e) {
-                                console.log('Write failed: ' + e.toString() + " on file " + fileToDownload.name);
-                            };
-
-                            fileWriter.write(fileToDownload.blob);
-
-                        }, errorHandler);
-
-                    }, errorHandler);
-                }
-            };
-
-            oReq.send(null);
+                    displayItem(index);
+                },
+                18000);
         }
-
         else {
-//            $("#imageInZone").attr('src', filesToDisplay[0]);
-//            $("#imageInZone").attr('src', "pool/SignageLiveDeliverMedia.jpg");
-            displayImages();
+            setTimeout(
+                function () {
+
+                    $('#videoZone').hide();
+                    $('#imageZone').show();
+                    $("#imageZone").attr('src', filesToDisplay[index].blobURL);
+
+                    index = index + 1;
+                    if (index >= filesToDisplay.length) {
+                        index = 0;
+                    }
+
+                    displayItem(index);
+                },
+                2000);
         }
     }
 
@@ -359,22 +320,78 @@ $(document).ready(function () {
         //var url = "chrome-extension://colflmholehgbhkebgghaopnobppmcoe_0/persistent/" + filesToDisplay[index];
         //var url = "chrome-extension://colflmholehgbhkebgghaopnobppmcoe/persistent/" + filesToDisplay[index];
         //var url = "chrome-extension://colflmholehgbhkebgghaopnobppmcoe/" + filesToDisplay[index];
-        var url = "./" + filesToDisplay[index];
         //$("#imageInZone").attr('src', url);
 
         //$("#imageInZone").attr('src', poop);
-        $("#imageZone").attr('src', filesToDisplay[index]);
 
-        var index = 0;
-        setInterval(
-            function() {
-                index = index + 1;
-                if (index >= filesToDisplay.length) {
-                    index = 0;
-                }
-                console.log("timeout: index = " + index.toString());
-                $("#imageZone").attr('src', filesToDisplay[index]);
-            }, 
-            5000);
+        //$("#imageZone").attr('src', filesToDisplay[index].blobURL);
+
+        //var index = 1;
+        //if (index >= filesToDisplay.length) {
+        //    index = 0;
+        //}
+
+        //var url = "./" + filesToDisplay[index].blobURL;
+
+        displayItem(0);
+
+        //while (true) {
+        //    if (filesToDisplay[index].mimeType == "video/mp4") {
+        //        $('#imageZone').hide();
+        //        $('#videoZone').show();
+        //        $("#videoZone").attr('src', filesToDisplay[index].blobURL);
+        //        $('#videoZone')[0].load();
+        //        $('#videoZone')[0].play();
+        //        setInterval(
+        //            function () {
+        //                console.log("play video");
+
+        //                index = index + 1;
+        //                if (index >= filesToDisplay.length) {
+        //                    index = 0;
+        //                }
+        //            },
+        //            8000);
+        //    }
+        //    else {
+        //        setTimeout(
+        //            function () {
+
+        //                $('#videoZone').hide();
+        //                $('#imageZone').show();
+        //                $("#imageZone").attr('src', filesToDisplay[index].blobURL);
+
+        //                index = index + 1;
+        //                if (index >= filesToDisplay.length) {
+        //                    index = 0;
+        //                }
+        //            },
+        //            2000);
+        //    }
+        //}
+
+        //setInterval(
+        //    function() {
+        //        index = index + 1;
+        //        if (index >= filesToDisplay.length) {
+        //            index = 0;
+        //        }
+        //        console.log("timeout: index = " + index.toString());
+
+        //        if (filesToDisplay[index].mimeType == "video/mp4") {
+        //            $('#imageZone').hide();
+        //            $('#videoZone').show();
+        //            $("#videoZone").attr('src', filesToDisplay[index].blobURL);
+        //            $('#videoZone')[0].load();
+        //            $('#videoZone')[0].play();
+        //            interval = 20000;
+        //        }
+        //        else {
+        //            $('#videoZone').hide();
+        //            $('#imageZone').show();
+        //            $("#imageZone").attr('src', filesToDisplay[index].blobURL);
+        //        }
+        //    }, 
+        //    4000);
     }
 });
