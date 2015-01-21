@@ -149,21 +149,23 @@ $(document).ready(function () {
         $.each(downloadItems, function (index, downloadItem) {
             // for now, only download image files (jpegs)
             if (downloadItem.name != undefined) {
-                var n = downloadItem.name.lastIndexOf(".jpg");
+                var fileName = downloadItem.name.toLowerCase();
+                var n = fileName.lastIndexOf(".jpg");
                 if (downloadItem.name.length == (n + 4)) {
                     console.log("found downloadItem " + downloadItem.name);
                     downloadItem.mimeType = "image/jpeg";
                     filesToDownload.push(downloadItem);
                 }
                 else {
-                    n = downloadItem.name.lastIndexOf(".png");
-                    if (downloadItem.name.length == (n + 4)) {
+                    n = fileName.lastIndexOf(".png");
+                    var startIndex = fileName.lastIndexOf("applicationwebserver")
+                    if (downloadItem.name.length == (n + 4) && (startIndex != 0)) {
                         console.log("found downloadItem " + downloadItem.name);
                         downloadItem.mimeType = "image/png";
                         filesToDownload.push(downloadItem);
                     }
                     else {
-                        n = downloadItem.name.lastIndexOf(".mp4");
+                        n = fileName.lastIndexOf(".mp4");
                         if (downloadItem.name.length == (n + 4)) {
                             console.log("found downloadItem " + downloadItem.name);
                             downloadItem.mimeType = "video/mp4";
