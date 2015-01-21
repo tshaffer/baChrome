@@ -3,6 +3,8 @@ $(document).ready(function () {
     // variables
     var _fileSystem;
     var filesToDisplay = [];
+    var displayList = [];
+    var displayInProgress = false;
 
     // code
 
@@ -147,7 +149,7 @@ $(document).ready(function () {
         var filesToDownload = [];
 
         $.each(downloadItems, function (index, downloadItem) {
-            // for now, only download image files (jpegs)
+            // for now, only download specific file types (.jpg, .png, .mp4)
             if (downloadItem.name != undefined) {
                 var fileName = downloadItem.name.toLowerCase();
                 var n = fileName.lastIndexOf(".jpg");
@@ -176,7 +178,8 @@ $(document).ready(function () {
             }
         });
 
-        fileToDisplay = filesToDownload[0];
+        //fileToDisplay = filesToDownload[0];
+        filesToDisplay = [];
         getFiles(filesToDownload);
     }
 
@@ -269,17 +272,17 @@ $(document).ready(function () {
 
     function displayItem(index) {
 
-        if (filesToDisplay[index].mimeType == "video/mp4") {
+        if (displayList[index].mimeType == "video/mp4") {
             $('#imageZone').hide();
             $('#videoZone').show();
-            $("#videoZone").attr('src', filesToDisplay[index].blobURL);
+            $("#videoZone").attr('src', displayList[index].blobURL);
             $('#videoZone')[0].load();
             $('#videoZone')[0].play();
 
             $("#videoZone").on("ended", function (e) {
                 console.log("video ended");
                 index = index + 1;
-                if (index >= filesToDisplay.length) {
+                if (index >= displayList.length) {
                     index = 0;
                 }
 
@@ -289,12 +292,12 @@ $(document).ready(function () {
         else {
             $('#videoZone').hide();
             $('#imageZone').show();
-            $("#imageZone").attr('src', filesToDisplay[index].blobURL);
+            $("#imageZone").attr('src', displayList[index].blobURL);
 
             setTimeout(
                 function () {
                     index = index + 1;
-                    if (index >= filesToDisplay.length) {
+                    if (index >= displayList.length) {
                         index = 0;
                     }
 
@@ -327,6 +330,22 @@ $(document).ready(function () {
 
         //var url = "./" + filesToDisplay[index].blobURL;
 
-        displayItem(0);
+        setTimeout(
+            function () {
+                console.log("time to check for a new sync spec");
+                retrieveSyncSpec();
+            },
+            30000);
+
+        // copy objects from the populated list to the display list
+        displayList = [];
+        $.each(filesToDisplay, function (index, fileToDisplay) {
+            displayList.push(fileToDisplay);
+        });
+
+        if (!displayInProgress) {
+            displayInProgress = true;
+            displayItem(0);
+        }
     }
 });
